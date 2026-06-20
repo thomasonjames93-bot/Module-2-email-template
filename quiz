@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Business Email Phrase Quiz</title>
+
+  <style>
+    :root {
+      --navy: #06214a;
+      --teal: #3fa7a9;
+      --light-teal: #e8f6f6;
+      --border: #d9e2ec;
+      --yellow: #ffd400;
+      --white: #ffffff;
+      --gray: #f6f8fb;
+    }
+
+    body {
+      font-family: Arial, sans-serif;
+      background: var(--gray);
+      color: var(--navy);
+      margin: 0;
+      padding: 30px;
+    }
+
+    .quiz-container {
+      max-width: 900px;
+      margin: 0 auto;
+      background: var(--white);
+      border: 2px solid var(--navy);
+      border-radius: 10px;
+      padding: 28px;
+    }
+
+    h1 {
+      margin-top: 0;
+      font-size: 24px;
+      color: var(--navy);
+      letter-spacing: 1px;
+    }
+
+    .instructions {
+      font-style: italic;
+      font-size: 18px;
+      margin-bottom: 6px;
+    }
+
+    .japanese {
+      font-size: 16px;
+      margin-bottom: 28px;
+    }
+
+    .question-card {
+      border: 1.5px solid var(--navy);
+      border-radius: 8px;
+      padding: 22px;
+      margin-bottom: 24px;
+      background: #ffffff;
+    }
+
+    .question-title {
+      font-size: 19px;
+      font-weight: bold;
+      margin-bottom: 20px;
+      color: var(--navy);
+    }
+
+    .target-phrase {
+      font-size: 18px;
+      font-weight: bold;
+      margin-bottom: 8px;
+    }
+
+    .translation {
+      font-size: 16px;
+      margin-bottom: 22px;
+    }
+
+    .word-bank {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    .word {
+      border: 1.5px solid var(--navy);
+      border-radius: 5px;
+      padding: 12px;
+      background: var(--white);
+      cursor: pointer;
+      font-size: 17px;
+      transition: 0.2s;
+    }
+
+    .word:hover {
+      background: var(--light-teal);
+      border-color: var(--teal);
+    }
+
+    .word.selected {
+      background: var(--teal);
+      color: white;
+      border-color: var(--teal);
+    }
+
+    .answer-box {
+      min-height: 48px;
+      border: 2px dashed var(--teal);
+      border-radius: 6px;
+      padding: 12px;
+      margin-bottom: 18px;
+      background: var(--light-teal);
+      font-size: 17px;
+    }
+
+    .button-row {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      border: none;
+      border-radius: 5px;
+      padding: 12px 22px;
+      font-size: 16px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    .check-btn {
+      background: var(--yellow);
+      color: var(--navy);
+    }
+
+    .reset-btn {
+      background: var(--navy);
+      color: white;
+    }
+
+    .next-btn {
+      background: var(--teal);
+      color: white;
+    }
+
+    .feedback {
+      margin-top: 16px;
+      font-size: 17px;
+      font-weight: bold;
+    }
+
+    .correct {
+      color: #16803c;
+    }
+
+    .incorrect {
+      color: #c0392b;
+    }
+
+    .progress {
+      margin-bottom: 16px;
+      font-weight: bold;
+      color: var(--teal);
+    }
+  </style>
+</head>
+
+<body>
+  <div class="quiz-container">
+    <h1>Business Email Phrase Quiz</h1>
+
+    <p class="instructions">
+      Put the words in the correct order to make a natural business email phrase.
+    </p>
+    <p class="japanese">
+      単語を正しい順番に並べ替えて、自然なビジネスメール表現を作りましょう。
+    </p>
+
+    <div class="progress" id="progress"></div>
+
+    <div class="question-card">
+      <div class="question-title" id="questionTitle"></div>
+
+      <div class="target-phrase" id="targetPhrase"></div>
+      <div class="translation" id="translation"></div>
+
+      <div class="answer-box" id="answerBox">
+        Click the words below to build your answer.
+      </div>
+
+      <div class="word-bank" id="wordBank"></div>
+
+      <div class="button-row">
+        <button class="check-btn" onclick="checkAnswer()">Check Answer / 答え合わせ</button>
+        <button class="reset-btn" onclick="resetAnswer()">Reset / やり直す</button>
+        <button class="next-btn" onclick="nextQuestion()">Next / 次へ</button>
+      </div>
+
+      <div class="feedback" id="feedback"></div>
+    </div>
+  </div>
+
+  <script>
+    const questions = [
+      {
+        title: "1. Greeting / 挨拶",
+        phrase: "Make this phrase: Dear Mr. Smith,",
+        japanese: "「スミス様」を作りましょう。",
+        answer: ["Dear", "Mr.", "Smith,"],
+        words: ["Smith,", "Dear", "Mr."]
+      },
+      {
+        title: "2. Opening / 挨拶文",
+        phrase: "Make this phrase: It was nice to meet you.",
+        japanese: "「お会いできてよかったです。」を作りましょう。",
+        answer: ["It", "was", "nice", "to", "meet", "you."],
+        words: ["meet", "It", "you.", "nice", "to", "was"]
+      },
+      {
+        title: "3. Context / 場面",
+        phrase: "Make this phrase: It was nice to meet you at the conference.",
+        japanese: "「カンファレンスでお会いできてよかったです。」を作りましょう。",
+        answer: ["It", "was", "nice", "to", "meet", "you", "at", "the", "conference."],
+        words: ["conference.", "nice", "It", "you", "the", "meet", "at", "was", "to"]
+      },
+      {
+        title: "4. Main Message / 本文",
+        phrase: "Make this phrase: I enjoyed talking with you.",
+        japanese: "「お話しできて楽しかったです。」を作りましょう。",
+        answer: ["I", "enjoyed", "talking", "with", "you."],
+        words: ["talking", "I", "you.", "with", "enjoyed"]
+      },
+      {
+        title: "5. Main Message / 本文",
+        phrase: "Make this phrase: I enjoyed learning about your company.",
+        japanese: "「御社について知ることができてよかったです。」を作りましょう。",
+        answer: ["I", "enjoyed", "learning", "about", "your", "company."],
+        words: ["your", "I", "company.", "about", "learning", "enjoyed"]
+      },
+      {
+        title: "6. Closing Statement / 締めの言葉",
+        phrase: "Make this phrase: I hope to see you again soon.",
+        japanese: "「また近いうちにお会いできることを楽しみにしています。」を作りましょう。",
+        answer: ["I", "hope", "to", "see", "you", "again", "soon."],
+        words: ["again", "I", "you", "soon.", "to", "hope", "see"]
+      },
+      {
+        title: "7. Closing Statement / 締めの言葉",
+        phrase: "Make this phrase: Thank you again for your time.",
+        japanese: "「改めてお時間をいただきありがとうございました。」を作りましょう。",
+        answer: ["Thank", "you", "again", "for", "your", "time."],
+        words: ["your", "Thank", "time.", "again", "you", "for"]
+      },
+      {
+        title: "8. Sign-off / 結びの挨拶",
+        phrase: "Make this phrase: Best regards,",
+        japanese: "「よろしくお願いいたします。」を作りましょう。",
+        answer: ["Best", "regards,"],
+        words: ["regards,", "Best"]
+      }
+    ];
+
+    let currentQuestion = 0;
+    let selectedWords = [];
+
+    function loadQuestion() {
+      const q = questions[currentQuestion];
+
+      document.getElementById("progress").textContent =
+        `Question ${currentQuestion + 1} of ${questions.length}`;
+
+      document.getElementById("questionTitle").textContent = q.title;
+      document.getElementById("targetPhrase").textContent = q.phrase;
+      document.getElementById("translation").textContent = q.japanese;
+
+      selectedWords = [];
+      document.getElementById("answerBox").textContent =
+        "Click the words below to build your answer.";
+      document.getElementById("feedback").textContent = "";
+      document.getElementById("feedback").className = "feedback";
+
+      const wordBank = document.getElementById("wordBank");
+      wordBank.innerHTML = "";
+
+      q.words.forEach((word, index) => {
+        const div = document.createElement("div");
+        div.className = "word";
+        div.textContent = word;
+        div.onclick = () => selectWord(word, div);
+        wordBank.appendChild(div);
+      });
+    }
+
+    function selectWord(word, element) {
+      if (element.classList.contains("selected")) return;
+
+      selectedWords.push(word);
+      element.classList.add("selected");
+
+      document.getElementById("answerBox").textContent = selectedWords.join(" ");
+      document.getElementById("feedback").textContent = "";
+    }
+
+    function checkAnswer() {
+      const q = questions[currentQuestion];
+      const userAnswer = selectedWords.join(" ");
+      const correctAnswer = q.answer.join(" ");
+      const feedback = document.getElementById("feedback");
+
+      if (userAnswer === correctAnswer) {
+        feedback.textContent = "Correct! よくできました！";
+        feedback.className = "feedback correct";
+      } else {
+        feedback.textContent = `Try again. 正しい答えは: ${correctAnswer}`;
+        feedback.className = "feedback incorrect";
+      }
+    }
+
+    function resetAnswer() {
+      selectedWords = [];
+      document.getElementById("answerBox").textContent =
+        "Click the words below to build your answer.";
+      document.getElementById("feedback").textContent = "";
+
+      document.querySelectorAll(".word").forEach(word => {
+        word.classList.remove("selected");
+      });
+    }
+
+    function nextQuestion() {
+      currentQuestion++;
+
+      if (currentQuestion >= questions.length) {
+        currentQuestion = 0;
+      }
+
+      loadQuestion();
+    }
+
+    loadQuestion();
+  </script>
+</body>
+</html>
