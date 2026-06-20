@@ -14,6 +14,8 @@
       --yellow: #ffd400;
       --white: #ffffff;
       --gray: #f6f8fb;
+      --success: #16803c;
+      --error: #c0392b;
     }
 
     body {
@@ -25,7 +27,7 @@
     }
 
     .quiz-container {
-      max-width: 900px;
+      max-width: 950px;
       margin: 0 auto;
       background: var(--white);
       border: 2px solid var(--navy);
@@ -40,6 +42,11 @@
       letter-spacing: 1px;
     }
 
+    h2 {
+      color: var(--navy);
+      margin-top: 0;
+    }
+
     .instructions {
       font-style: italic;
       font-size: 18px;
@@ -49,6 +56,12 @@
     .japanese {
       font-size: 16px;
       margin-bottom: 28px;
+    }
+
+    .progress {
+      margin-bottom: 16px;
+      font-weight: bold;
+      color: var(--teal);
     }
 
     .question-card {
@@ -62,47 +75,19 @@
     .question-title {
       font-size: 19px;
       font-weight: bold;
-      margin-bottom: 20px;
+      margin-bottom: 14px;
       color: var(--navy);
     }
 
-    .target-phrase {
-      font-size: 18px;
-      font-weight: bold;
+    .task-text {
+      font-size: 17px;
       margin-bottom: 8px;
+      font-weight: bold;
     }
 
     .translation {
       font-size: 16px;
       margin-bottom: 22px;
-    }
-
-    .word-bank {
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-      margin-bottom: 22px;
-    }
-
-    .word {
-      border: 1.5px solid var(--navy);
-      border-radius: 5px;
-      padding: 12px;
-      background: var(--white);
-      cursor: pointer;
-      font-size: 17px;
-      transition: 0.2s;
-    }
-
-    .word:hover {
-      background: var(--light-teal);
-      border-color: var(--teal);
-    }
-
-    .word.selected {
-      background: var(--teal);
-      color: white;
-      border-color: var(--teal);
     }
 
     .answer-box {
@@ -113,6 +98,38 @@
       margin-bottom: 18px;
       background: var(--light-teal);
       font-size: 17px;
+    }
+
+    .word-bank,
+    .phrase-bank {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      margin-bottom: 22px;
+    }
+
+    .word,
+    .phrase {
+      border: 1.5px solid var(--navy);
+      border-radius: 5px;
+      padding: 12px;
+      background: var(--white);
+      cursor: pointer;
+      font-size: 17px;
+      transition: 0.2s;
+    }
+
+    .word:hover,
+    .phrase:hover {
+      background: var(--light-teal);
+      border-color: var(--teal);
+    }
+
+    .word.selected,
+    .phrase.selected {
+      background: var(--teal);
+      color: white;
+      border-color: var(--teal);
     }
 
     .button-row {
@@ -152,17 +169,26 @@
     }
 
     .correct {
-      color: #16803c;
+      color: var(--success);
     }
 
     .incorrect {
-      color: #c0392b;
+      color: var(--error);
     }
 
-    .progress {
-      margin-bottom: 16px;
-      font-weight: bold;
-      color: var(--teal);
+    .hidden {
+      display: none;
+    }
+
+    .email-preview {
+      white-space: pre-line;
+      background: #ffffff;
+      border: 2px solid var(--teal);
+      border-radius: 8px;
+      padding: 18px;
+      margin-top: 20px;
+      line-height: 1.7;
+      font-size: 17px;
     }
   </style>
 </head>
@@ -178,27 +204,57 @@
       単語を正しい順番に並べ替えて、自然なビジネスメール表現を作りましょう。
     </p>
 
-    <div class="progress" id="progress"></div>
+    <!-- PHRASE QUIZ SECTION -->
+    <div id="phraseQuizSection">
+      <div class="progress" id="progress"></div>
 
-    <div class="question-card">
-      <div class="question-title" id="questionTitle"></div>
+      <div class="question-card">
+        <div class="question-title" id="questionTitle"></div>
 
-      <div class="target-phrase" id="targetPhrase"></div>
-      <div class="translation" id="translation"></div>
+        <div class="task-text" id="taskText"></div>
+        <div class="translation" id="translation"></div>
 
-      <div class="answer-box" id="answerBox">
-        Click the words below to build your answer.
+        <div class="answer-box" id="answerBox">
+          Click the words below to build your answer.
+        </div>
+
+        <div class="word-bank" id="wordBank"></div>
+
+        <div class="button-row">
+          <button class="check-btn" onclick="checkPhraseAnswer()">Check Answer / 答え合わせ</button>
+          <button class="reset-btn" onclick="resetPhraseAnswer()">Reset / やり直す</button>
+          <button class="next-btn hidden" id="nextPhraseBtn" onclick="nextPhrase()">Next / 次へ</button>
+        </div>
+
+        <div class="feedback" id="feedback"></div>
+      </div>
+    </div>
+
+    <!-- EMAIL ORDER SECTION -->
+    <div id="emailOrderSection" class="hidden">
+      <h2>Final Step: Put the Email in Order</h2>
+
+      <p class="instructions">
+        Now put the correct phrases in order to make a complete email.
+      </p>
+      <p class="japanese">
+        次に、完成したフレーズを正しい順番に並べて、メールを完成させましょう。
+      </p>
+
+      <div class="answer-box" id="emailAnswerBox">
+        Click the phrases below to build your email.
       </div>
 
-      <div class="word-bank" id="wordBank"></div>
+      <div class="phrase-bank" id="phraseBank"></div>
 
       <div class="button-row">
-        <button class="check-btn" onclick="checkAnswer()">Check Answer / 答え合わせ</button>
-        <button class="reset-btn" onclick="resetAnswer()">Reset / やり直す</button>
-        <button class="next-btn" onclick="nextQuestion()">Next / 次へ</button>
+        <button class="check-btn" onclick="checkEmailOrder()">Check Email / 答え合わせ</button>
+        <button class="reset-btn" onclick="resetEmailOrder()">Reset / やり直す</button>
       </div>
 
-      <div class="feedback" id="feedback"></div>
+      <div class="feedback" id="emailFeedback"></div>
+
+      <div id="finalEmail" class="email-preview hidden"></div>
     </div>
   </div>
 
@@ -206,73 +262,78 @@
     const questions = [
       {
         title: "1. Greeting / 挨拶",
-        phrase: "Make this phrase: Dear Mr. Smith,",
-        japanese: "「スミス様」を作りましょう。",
+        task: "Make a greeting.",
+        japanese: "挨拶を作りましょう。",
         answer: ["Dear", "Mr.", "Smith,"],
         words: ["Smith,", "Dear", "Mr."]
       },
       {
         title: "2. Opening / 挨拶文",
-        phrase: "Make this phrase: It was nice to meet you.",
-        japanese: "「お会いできてよかったです。」を作りましょう。",
-        answer: ["It", "was", "nice", "to", "meet", "you."],
-        words: ["meet", "It", "you.", "nice", "to", "was"]
-      },
-      {
-        title: "3. Context / 場面",
-        phrase: "Make this phrase: It was nice to meet you at the conference.",
-        japanese: "「カンファレンスでお会いできてよかったです。」を作りましょう。",
+        task: "Make an opening sentence.",
+        japanese: "メールの始めの挨拶文を作りましょう。",
         answer: ["It", "was", "nice", "to", "meet", "you", "at", "the", "conference."],
         words: ["conference.", "nice", "It", "you", "the", "meet", "at", "was", "to"]
       },
       {
-        title: "4. Main Message / 本文",
-        phrase: "Make this phrase: I enjoyed talking with you.",
-        japanese: "「お話しできて楽しかったです。」を作りましょう。",
-        answer: ["I", "enjoyed", "talking", "with", "you."],
-        words: ["talking", "I", "you.", "with", "enjoyed"]
+        title: "3. Main Message / 本文",
+        task: "Make the main message.",
+        japanese: "本文のメッセージを作りましょう。",
+        answer: ["I", "enjoyed", "talking", "with", "you", "about", "your", "company."],
+        words: ["company.", "talking", "I", "your", "you", "with", "about", "enjoyed"]
       },
       {
-        title: "5. Main Message / 本文",
-        phrase: "Make this phrase: I enjoyed learning about your company.",
-        japanese: "「御社について知ることができてよかったです。」を作りましょう。",
-        answer: ["I", "enjoyed", "learning", "about", "your", "company."],
-        words: ["your", "I", "company.", "about", "learning", "enjoyed"]
-      },
-      {
-        title: "6. Closing Statement / 締めの言葉",
-        phrase: "Make this phrase: I hope to see you again soon.",
-        japanese: "「また近いうちにお会いできることを楽しみにしています。」を作りましょう。",
+        title: "4. Future Contact / 今後の連絡",
+        task: "Make a future contact sentence.",
+        japanese: "また会いたい気持ちを伝える文を作りましょう。",
         answer: ["I", "hope", "to", "see", "you", "again", "soon."],
         words: ["again", "I", "you", "soon.", "to", "hope", "see"]
       },
       {
-        title: "7. Closing Statement / 締めの言葉",
-        phrase: "Make this phrase: Thank you again for your time.",
-        japanese: "「改めてお時間をいただきありがとうございました。」を作りましょう。",
+        title: "5. Closing Statement / 締めの言葉",
+        task: "Make a closing statement.",
+        japanese: "締めの言葉を作りましょう。",
         answer: ["Thank", "you", "again", "for", "your", "time."],
         words: ["your", "Thank", "time.", "again", "you", "for"]
       },
       {
-        title: "8. Sign-off / 結びの挨拶",
-        phrase: "Make this phrase: Best regards,",
-        japanese: "「よろしくお願いいたします。」を作りましょう。",
+        title: "6. Sign-off / 結びの挨拶",
+        task: "Make a sign-off.",
+        japanese: "結びの挨拶を作りましょう。",
         answer: ["Best", "regards,"],
         words: ["regards,", "Best"]
+      },
+      {
+        title: "7. Signature / 署名",
+        task: "Make a simple signature.",
+        japanese: "署名を作りましょう。",
+        answer: ["Taro", "Yamada"],
+        words: ["Yamada", "Taro"]
       }
+    ];
+
+    const correctEmailOrder = [
+      "Dear Mr. Smith,",
+      "It was nice to meet you at the conference.",
+      "I enjoyed talking with you about your company.",
+      "I hope to see you again soon.",
+      "Thank you again for your time.",
+      "Best regards,",
+      "Taro Yamada"
     ];
 
     let currentQuestion = 0;
     let selectedWords = [];
+    let completedPhrases = [];
+    let selectedEmailPhrases = [];
 
-    function loadQuestion() {
+    function loadPhraseQuestion() {
       const q = questions[currentQuestion];
 
       document.getElementById("progress").textContent =
         `Question ${currentQuestion + 1} of ${questions.length}`;
 
       document.getElementById("questionTitle").textContent = q.title;
-      document.getElementById("targetPhrase").textContent = q.phrase;
+      document.getElementById("taskText").textContent = q.task;
       document.getElementById("translation").textContent = q.japanese;
 
       selectedWords = [];
@@ -280,11 +341,12 @@
         "Click the words below to build your answer.";
       document.getElementById("feedback").textContent = "";
       document.getElementById("feedback").className = "feedback";
+      document.getElementById("nextPhraseBtn").classList.add("hidden");
 
       const wordBank = document.getElementById("wordBank");
       wordBank.innerHTML = "";
 
-      q.words.forEach((word, index) => {
+      q.words.forEach(word => {
         const div = document.createElement("div");
         div.className = "word";
         div.textContent = word;
@@ -303,7 +365,7 @@
       document.getElementById("feedback").textContent = "";
     }
 
-    function checkAnswer() {
+    function checkPhraseAnswer() {
       const q = questions[currentQuestion];
       const userAnswer = selectedWords.join(" ");
       const correctAnswer = q.answer.join(" ");
@@ -312,34 +374,104 @@
       if (userAnswer === correctAnswer) {
         feedback.textContent = "Correct! よくできました！";
         feedback.className = "feedback correct";
+
+        completedPhrases[currentQuestion] = correctAnswer;
+        document.getElementById("nextPhraseBtn").classList.remove("hidden");
       } else {
-        feedback.textContent = `Try again. 正しい答えは: ${correctAnswer}`;
+        feedback.textContent = "Try again. もう一度やってみましょう。";
         feedback.className = "feedback incorrect";
       }
     }
 
-    function resetAnswer() {
+    function resetPhraseAnswer() {
       selectedWords = [];
       document.getElementById("answerBox").textContent =
         "Click the words below to build your answer.";
       document.getElementById("feedback").textContent = "";
+      document.getElementById("nextPhraseBtn").classList.add("hidden");
 
       document.querySelectorAll(".word").forEach(word => {
         word.classList.remove("selected");
       });
     }
 
-    function nextQuestion() {
+    function nextPhrase() {
       currentQuestion++;
 
       if (currentQuestion >= questions.length) {
-        currentQuestion = 0;
+        showEmailOrderSection();
+      } else {
+        loadPhraseQuestion();
       }
-
-      loadQuestion();
     }
 
-    loadQuestion();
+    function showEmailOrderSection() {
+      document.getElementById("phraseQuizSection").classList.add("hidden");
+      document.getElementById("emailOrderSection").classList.remove("hidden");
+
+      selectedEmailPhrases = [];
+      document.getElementById("emailAnswerBox").textContent =
+        "Click the phrases below to build your email.";
+      document.getElementById("emailFeedback").textContent = "";
+      document.getElementById("finalEmail").classList.add("hidden");
+
+      const shuffledPhrases = [...correctEmailOrder].sort(() => Math.random() - 0.5);
+      const phraseBank = document.getElementById("phraseBank");
+      phraseBank.innerHTML = "";
+
+      shuffledPhrases.forEach(phrase => {
+        const div = document.createElement("div");
+        div.className = "phrase";
+        div.textContent = phrase;
+        div.onclick = () => selectEmailPhrase(phrase, div);
+        phraseBank.appendChild(div);
+      });
+    }
+
+    function selectEmailPhrase(phrase, element) {
+      if (element.classList.contains("selected")) return;
+
+      selectedEmailPhrases.push(phrase);
+      element.classList.add("selected");
+
+      document.getElementById("emailAnswerBox").textContent =
+        selectedEmailPhrases.join("\n\n");
+
+      document.getElementById("emailFeedback").textContent = "";
+    }
+
+    function checkEmailOrder() {
+      const userEmail = selectedEmailPhrases.join("|");
+      const correctEmail = correctEmailOrder.join("|");
+      const feedback = document.getElementById("emailFeedback");
+
+      if (userEmail === correctEmail) {
+        feedback.textContent = "Correct! Your email is complete. よくできました！";
+        feedback.className = "feedback correct";
+
+        document.getElementById("finalEmail").textContent =
+          correctEmailOrder.join("\n\n");
+
+        document.getElementById("finalEmail").classList.remove("hidden");
+      } else {
+        feedback.textContent = "Try again. Check the order of the email. もう一度、メールの順番を確認しましょう。";
+        feedback.className = "feedback incorrect";
+      }
+    }
+
+    function resetEmailOrder() {
+      selectedEmailPhrases = [];
+      document.getElementById("emailAnswerBox").textContent =
+        "Click the phrases below to build your email.";
+      document.getElementById("emailFeedback").textContent = "";
+      document.getElementById("finalEmail").classList.add("hidden");
+
+      document.querySelectorAll(".phrase").forEach(phrase => {
+        phrase.classList.remove("selected");
+      });
+    }
+
+    loadPhraseQuestion();
   </script>
 </body>
 </html>
